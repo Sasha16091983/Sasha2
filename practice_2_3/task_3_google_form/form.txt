@@ -1,0 +1,25 @@
+function createGoogleForm() {
+  // Створюємо нову форму
+  var form = FormApp.create('Форма для збору даних')
+    .setDescription('Ця форма дозволяє збирати дані про ім\'я, дату та відділ.');
+
+  // Додавання полів до форми
+  form.addTextItem()
+    .setTitle('Ім\'я')
+    .setRequired(true);
+
+  form.addDateItem()
+    .setTitle('Дата')
+    .setRequired(true);
+
+  form.addTextItem()
+    .setTitle('Відділ')
+    .setRequired(true);
+
+  // Отримання URL для редагування форми
+  var url = form.getEditUrl();
+  Logger.log('URL для редагування форми: ' + url);
+}
+Информация
+URL для редагування форми: https://docs.google.com/forms/d/1wAyyq977tkWVBMLwrri7Zpyu50aWYFBPY5gRAXFDGsE/edit
+https://forms.gle/KaGP2eP7GNj5TVy68
