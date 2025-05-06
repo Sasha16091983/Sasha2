@@ -1,0 +1,109 @@
+@startuml TaskFlow - Діаграма класів
+
+skinparam classAttributeIconSize 0
+
+class User {
+  - id: int
+  - username: string
+  - email: string
+  - password: string
+  + register(): void
+  + login(): boolean
+  + updateProfile(): void
+}
+
+class Project {
+  - id: int
+  - name: string
+  - description: string
+  - startDate: date
+  - endDate: date
+  + create(): void
+  + update(): void
+  + delete(): void
+  + addMember(user: User): void
+}
+
+class Task {
+  - id: int
+  - title: string
+  - description: string
+  - status: TaskStatus
+  - priority: Priority
+  - dueDate: date
+  + create(): void
+  + update(): void
+  + delete(): void
+  + assignTo(user: User): void
+  + changeStatus(status: TaskStatus): void
+}
+
+enum TaskStatus {
+  TODO
+  IN_PROGRESS
+  REVIEW
+  DONE
+}
+
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+class Comment {
+  - id: int
+  - text: string
+  - createdAt: datetime
+  + create(): void
+  + update(): void
+  + delete(): void
+}
+
+class Notification {
+  - id: int
+  - message: string
+  - createdAt: datetime
+  - isRead: boolean
+  + create(): void
+  + markAsRead(): void
+}
+
+class ReportService {
+  + generateTaskReport(project: Project): Report
+  + generateUserReport(user: User): Report
+}
+
+class Report {
+  - id: int
+  - type: string
+  - generatedAt: datetime
+  - content: string
+  + download(): void
+}
+
+class AuthService {
+  + authenticate(email: string, password: string): boolean
+  + generateToken(user: User): string
+  + validateToken(token: string): boolean
+}
+
+' Зв'язки між класами
+User "1" -- "*" Project : створює >
+User "*" -- "*" Project : є учасником >
+User "1" -- "*" Task : призначено >
+User "1" -- "*" Comment : створює >
+User "1" -- "*" Notification : отримує >
+
+Project "1" *-- "*" Task : містить >
+
+Task "1" *-- "*" Comment : має >
+
+ReportService ..> Report : створює >
+ReportService ..> Project : використовує >
+ReportService ..> User : використовує >
+
+User ..> AuthService : використовує >
+
+@enduml

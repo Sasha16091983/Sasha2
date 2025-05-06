@@ -1,0 +1,51 @@
+@startuml TaskFlow - Діаграма послідовності
+
+actor Користувач as User
+participant "Веб-інтерфейс" as Frontend
+participant "Сервер" as Backend
+participant "Сервіс завдань" as TaskService
+participant "База даних" as Database
+participant "Сервіс сповіщень" as NotificationService
+
+User -> Frontend : Створити нове завдання
+activate Frontend
+
+Frontend -> Backend : POST /api/tasks
+activate Backend
+
+Backend -> TaskService : createTask(taskData)
+activate TaskService
+
+TaskService -> Database : INSERT INTO tasks
+activate Database
+Database --> TaskService : task_id
+deactivate Database
+
+TaskService --> Backend : Створене завдання
+deactivate TaskService
+
+Backend -> Backend : Призначити завдання користувачу
+
+Backend -> Database : UPDATE tasks SET assignee_id = user_id
+activate Database
+Database --> Backend : Успішно оновлено
+deactivate Database
+
+Backend -> NotificationService : sendNotification(assignee_id, task_id)
+activate NotificationService
+
+NotificationService -> Database : INSERT INTO notifications
+activate Database
+Database --> NotificationService : notification_id
+deactivate Database
+
+NotificationService --> Backend : Сповіщення надіслано
+deactivate NotificationService
+
+Backend --> Frontend : Відповідь: Завдання створено та призначено
+deactivate Backend
+
+Frontend --> User : Показати повідомлення про успіх
+deactivate Frontend
+
+@enduml
