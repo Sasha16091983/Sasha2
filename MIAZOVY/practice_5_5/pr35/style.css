@@ -1,0 +1,180 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Arial', sans-serif;
+}
+
+body {
+    background-color: #f5f5f5;
+    color: #333;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Навігаційна панель */
+.navbar {
+    background-color: #2c3e50;
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 2rem;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.logo {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.nav-menu {
+    display: flex;
+    list-style: none;
+}
+
+.nav-menu li {
+    margin-left: 1.5rem;
+}
+
+.nav-menu a {
+    color: white;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+.nav-menu a:hover {
+    color: #3498db;
+}
+
+/* Заголовок */
+.header {
+    background-color: #3498db;
+    color: white;
+    text-align: center;
+    padding: 2rem 0;
+    margin-bottom: 2rem;
+}
+
+/* Основний контейнер */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+    flex: 1;
+}
+
+.flex-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: space-between;
+}
+
+/* Блоки з графіками */
+.graph-block {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    width: calc(50% - 10px);
+}
+
+.graph-block h2 {
+    color: #2c3e50;
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+}
+
+.graph-placeholder {
+    min-height: 300px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+/* Таблиця */
+#student-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+}
+
+#student-table th, #student-table td {
+    padding: 0.75rem;
+    text-align: left;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+#student-table th {
+    background-color: #f2f2f2;
+    font-weight: bold;
+}
+
+#student-table tbody tr:hover {
+    background-color: #f9f9f9;
+}
+
+/* Карта */
+#map {
+    height: 300px;
+    width: 100%;
+    border-radius: 4px;
+}
+
+/* Інформаційні картки */
+#info-cards {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    justify-content: space-between;
+}
+
+.info-card {
+    background-color: #f8f9fa;
+    border-left: 4px solid;
+    border-radius: 4px;
+    padding: 15px;
+    width: calc(50% - 8px);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.info-card h3 {
+    font-size: 1rem;
+    margin-bottom: 5px;
+}
+
+.info-card p {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+/* Футер */
+.footer {
+    background-color: #2c3e50;
+    color: white;
+    text-align: center;
+    padding: 1rem 0;
+    margin-top: 2rem;
+}
+
+/* Адаптивність */
+@media (max-width: 768px) {
+    .flex-container {
+        flex-direction: column;
+    }
+    
+    .graph-block {
+        width: 100%;
+    }
+    
+    .info-card {
+        width: 100%;
+    }
+    
+    .nav-menu {
+        display: none;
+    }
+}

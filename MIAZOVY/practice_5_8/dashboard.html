@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <title>Дашборд: Режими перегляду для різних аудиторій</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Підключення Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+      background-color: #f0f2f5;
+      margin: 0;
+      padding: 20px;
+      color: #333;
+    }
+    header {
+      background-color: #004080;
+      padding: 20px;
+      text-align: center;
+      color: #fff;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    .toggle-container {
+      text-align: center;
+      margin: 20px 0;
+    }
+    .toggle-btn {
+      padding: 10px 20px;
+      background-color: #0066cc;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin: 0 10px;
+      transition: all 0.3s ease;
+    }
+    .toggle-btn:hover {
+      background-color: #0055aa;
+      transform: translateY(-2px);
+    }
+    .toggle-btn.active {
+      background-color: #ffcc00;
+      color: #000;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+    .chart-container {
+      max-width: 800px;
+      margin: 0 auto;
+      background-color: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    .dashboard-info {
+      max-width: 800px;
+      margin: 20px auto;
+      padding: 15px;
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    .chart-type-selector {
+      text-align: center;
+      margin: 20px 0;
+    }
+    .chart-type-btn {
+      padding: 8px 16px;
+      background-color: #e0e0e0;
+      color: #333;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      margin: 0 5px;
+      transition: all 0.2s ease;
+    }
+    .chart-type-btn.active {
+      background-color: #0066cc;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Дашборд для різних аудиторій</h1>
+    <p>Перемикайте режим відображення: Спрощений vs Детальний</p>
+  </header>
+   
+  <div class="toggle-container">
+    <button id="simpleBtn" class="toggle-btn active" onclick="setMode('simple')">Спрощений</button>
+    <button id="detailedBtn" class="toggle-btn" onclick="setMode('detailed')">Детальний</button>
+  </div>
+
+  <div class="chart-type-selector">
+    <button id="barChartBtn" class="chart-type-btn active" onclick="setChartType('bar')">Стовпчиковий</button>
+    <button id="lineChartBtn" class="chart-type-btn" onclick="setChartType('line')">Лінійний</button>
+    <button id="pieChartBtn" class="chart-type-btn" onclick="setChartType('pie')">Круговий</button>
+  </div>
+   
+  <div class="chart-container">
+    <canvas id="myChart"></canvas>
+  </div>
+
+  <div class="dashboard-info">
+    <h3 id="info-title">Інформація про дані</h3>
+    <p id="info-content">У спрощеному режимі відображаються лише дані про продажі за останні 5 місяців. Перемкніться на детальний режим, щоб побачити додаткову інформацію про витрати.</p>
+  </div>
+   
+  <script>
+    // Дані для двох режимів: спрощений та детальний 
+    const simpleData = { 
+      labels: ['Січень', 'Лютий', 'Березень', 'Квітень', 'Травень'], 
+      datasets: [{ 
+        label: 'Продажі ($) - Спрощено', 
+        data: [15000, 18000, 17000, 19000, 21000], 
+        backgroundColor: 'rgba(54, 162, 235, 0.7)', 
+        borderColor: 'rgba(54, 162, 235, 1)', 
+        borderWidth: 1 
+      }] 
+    }; 
+ 
+    const detailedData = { 
+      labels: ['Січень', 'Лютий', 'Березень', 'Квітень', 'Травень'], 
+      datasets: [{ 
+        label: 'Продажі ($) - Детально', 
+        data: [15000, 18000, 17000, 19000, 21000], 
+        backgroundColor: 'rgba(54, 162, 235, 0.7)', 
+        borderColor: 'rgba(54, 162, 235, 1)', 
+        borderWidth: 1 
+      }, { 
+        label: 'Витрати ($)', 
+        data: [5000, 6000, 5500, 6500, 7000], 
+        backgroundColor: 'rgba(255, 99, 132, 0.7)', 
+        borderColor: 'rgba(255, 99, 132, 1)', 
+        borderWidth: 1 
+      }, {
+        label: 'Прибуток ($)',
+        data: [10000, 12000, 11500, 12500, 14000],
+        backgroundColor: 'rgba(75, 192, 192, 0.7)',
+        borderColor: 'rgba(75, 192, 192, 1)',
+        borderWidth: 1
+      }] 
+    }; 
+
+    // Дані для кругової діаграми
+    const simplePieData = {
+      labels: ['Січень', 'Лютий', 'Березень', 'Квітень', 'Травень'],
+      datasets: [{
+        label: 'Продажі ($) - Спрощено',
+        data: [15000, 18000, 17000, 19000, 21000],
+        backgroundColor: [
+          'rgba(54, 162, 235, 0.7)',
+          'rgba(255, 99, 132, 0.7)',
+          'rgba(255, 206, 86, 0.7)',
+          'rgba(75, 192, 192, 0.7)',
+          'rgba(153, 102, 255, 0.7)'
+        ],
+        borderColor: [
+          'rgba(54, 162, 235, 1)',
+          'rgba(255, 99, 132, 1)',
+          'rgba(255, 206, 86, 1)',
+          'rgba(75, 192, 192, 1)',
+          'rgba(153, 102, 255, 1)'
+        ],
+        borderWidth: 1
+      }]
+    };
+
+    const detailedPieData = {
+      labels: ['Продажі', 'Витрати', 'Прибуток'],
+      datasets: [{
+        label: 'Фінансові показники ($)',
+        data: [90000, 30000, 60000],
+        backgroundColor: [
+          'rgba(54, 162, 235, 0.7)',
+          'rgba(255, 99, 132, 0.7)',
+          'rgba(75, 192, 192, 0.7)'
+        ],
+        borderColor: [
+          'rgba(54, 162, 235, 1)',
+          'rgba(255, 99, 132, 1)',
+          'rgba(75, 192, 192, 1)'
+        ],
+        borderWidth: 1
+      }]
+    };
+
+    let currentMode = 'simple';
+    let currentChartType = 'bar';
+
+    const ctx = document.getElementById('myChart').getContext('2d');
+    let myChart = new Chart(ctx, {
+      type: currentChartType,
+      data: simpleData,
+      options: {
+        responsive: true,
+        plugins: {
+          title: {
+            display: true,
+            text: 'Місячні показники продажів',
+            font: {
+              size: 16
+            }
+          },
+          legend: {
+            position: 'top',
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            title: {
+              display: true,
+              text: 'Сума ($)'
+            }
+          }
+        }
+      }
+    });
+
+    function setMode(mode) {
+      currentMode = mode;
+      // Оновлення кнопок
+      document.getElementById('simpleBtn').classList.toggle('active', mode === 'simple');
+      document.getElementById('detailedBtn').classList.toggle('active', mode === 'detailed');
+      
+      updateChart();
+      updateInfoContent();
+    }
+
+    function setChartType(type) {
+      currentChartType = type;
+      // Оновлення кнопок типу графіка
+      document.getElementById('barChartBtn').classList.toggle('active', type === 'bar');
+      document.getElementById('lineChartBtn').classList.toggle('active', type === 'line');
+      document.getElementById('pieChartBtn').classList.toggle('active', type === 'pie');
+      
+      updateChart();
+    }
+
+    function updateChart() {
+      // Знищуємо попередній графік
+      myChart.destroy();
+      
+      let chartData;
+      let chartOptions = {
+        responsive: true,
+        plugins: {
+          title: {
+            display: true,
+            text: '',
+            font: {
+              size: 16
+            }
+          },
+          legend: {
+            position: 'top',
+          }
+        }
+      };
+
+      // Визначаємо дані та налаштування в залежності від режиму та типу графіка
+      if (currentChartType === 'pie') {
+        chartData = currentMode === 'simple' ? simplePieData : detailedPieData;
+        chartOptions.plugins.title.text = currentMode === 'simple' ? 
+          'Розподіл продажів за місяцями' : 'Загальний фінансовий розподіл';
+      } else {
+        chartData = currentMode === 'simple' ? simpleData : detailedData;
+        chartOptions.plugins.title.text = currentMode === 'simple' ? 
+          'Місячні показники продажів (Спрощено)' : 'Місячні показники продажів та витрат (Детально)';
+        
+        // Додаємо шкали для bar і line графіків
+        chartOptions.scales = {
+          y: {
+            beginAtZero: true,
+            title: {
+              display: true,
+              text: 'Сума ($)'
+            }
+          }
+        };
+      }
+
+      // Створюємо новий графік
+      myChart = new Chart(ctx, {
+        type: currentChartType,
+        data: chartData,
+        options: chartOptions
+      });
+    }
+
+    function updateInfoContent() {
+      const infoTitle = document.getElementById('info-title');
+      const infoContent = document.getElementById('info-content');
+      
+      if (currentMode === 'simple') {
+        infoTitle.textContent = 'Інформація про дані (Спрощений режим)';
+        infoContent.textContent = 'У спрощеному режимі відображаються лише дані про продажі за останні 5 місяців. Перемкніться на детальний режим, щоб побачити додаткову інформацію про витрати та прибуток.';
+      } else {
+        infoTitle.textContent = 'Інформація про дані (Детальний режим)';
+        infoContent.textContent = 'У детальному режимі відображаються дані про продажі, витрати та прибуток за останні 5 місяців. Ви можете перемикатися між різними типами графіків для кращого аналізу даних.';
+      }
+    }
+  </script>
+</body>
+</html>
